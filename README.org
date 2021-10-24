@@ -1,0 +1,12 @@
+# -*- eval: (visual-line-mode 1) -*-
+#+STARTUP: showall
+
+* org-inline-anim
+
+Org-inline-anim plays animated GIF or PNG inline in Org Babel's results block.
+
+** Installation
+
+** Usage
+
+You can play animated GIF or PNG graphics in a results block by =M-x org-inline-anim-animate= (or =C-c C-x m=). This key binding works when the point is within the results block or the source code block from which the result was output.
