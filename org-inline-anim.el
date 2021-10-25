@@ -37,7 +37,6 @@
 
 ;;; Code:
 
-(require 'org)
 (require 'org-element)
 
 (defconst org-inline-anim-key (kbd "C-c C-x m"))
