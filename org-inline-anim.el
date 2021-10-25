@@ -1,4 +1,4 @@
-;;; org-inline-anim.el --- Animate inline GIF or PNG animation -*- lexical-binding: t -*-
+;;; org-inline-anim.el --- Play animated GIF or PNG inline in Org -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2021 Shigeaki Nishina
 
@@ -8,7 +8,7 @@
 ;; URL: https://github.com/shg/org-inline-anim.el
 ;; Package-Requires: ((emacs "25.1") (org "9.4"))
 ;; Version: 0.1
-;; Keywords: org, outlines, hypermedia
+;; Keywords: org, outlines, hypermedia, multimedia
 
 ;; This file is not part of GNU Emacs.
 
@@ -29,7 +29,7 @@
 
 ;;; Commentary:
 
-;; Animate inline GIF or PNG animation.
+;; Play animated GIF or PNG inline in Org buffers.
 
 ;;; Usage:
 
