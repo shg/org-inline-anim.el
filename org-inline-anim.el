@@ -93,8 +93,8 @@
 			 (org-inline-anim--first-image-overlay overlays))
 		     (org-inline-anim--get-image-overlay-at-point)))))
 	   (disp (overlay-get ov 'display)))
-      (when (image-multi-frame-p disp)
-	(image-animate disp)))))
+      (if (image-multi-frame-p disp)
+	  (image-animate disp)))))
 
 ;;;###autoload
 (define-minor-mode org-inline-anim-mode
