@@ -7,7 +7,7 @@
 ;; Created: October 24, 2021
 ;; URL: https://github.com/shg/org-inline-anim.el
 ;; Package-Requires: ((emacs "25.1") (org "9.4"))
-;; Version: 0.1
+;; Version: 0.1a
 ;; Keywords: org, outlines, hypermedia, multimedia
 
 ;; This file is not part of GNU Emacs.
@@ -74,9 +74,15 @@
 		(goto-char rebeg)
 		(org-inline-anim--get-image-overlay-in-result)))))))
 
-(defun org-inline-anim-animate ()
-  "Animate graphics at the current pos or in the result block of the current source block."
-  (interactive)
+(defun org-inline-anim-animate (&optional arg)
+  "Animate graphics at point or in the result block of the current source block.
+
+Without a prefix ARG, the animation is played once and stops.
+With a single prefix arg, the animation loops.  With a double
+prefix arg, the animation goes to the final frame and stops.
+With a numeric prefix arg of 0, the animation goes to the first
+frame and stops."
+  (interactive "P")
   (save-excursion
     (let* ((ov (let ((element (org-element-at-point)))
 		 (if (eq (org-element-type element) 'src-block)
@@ -93,8 +99,17 @@
 			 (org-inline-anim--first-image-overlay overlays))
 		     (org-inline-anim--get-image-overlay-at-point)))))
 	   (disp (overlay-get ov 'display)))
-      (if (image-multi-frame-p disp)
-	  (image-animate disp)))))
+      (let ((frames (image-multi-frame-p disp))
+	    (prefix (prefix-numeric-value arg)))
+	(if frames
+	    (cond ((= prefix 4)
+		   (image-animate disp 0 t))
+		  ((= prefix 16)
+		   (image-animate disp (1- (car frames)) 0))
+		  ((= prefix 0)
+		   (image-animate disp 0 0))
+		  (t
+		   (image-animate disp))))))))
 
 ;;;###autoload
 (define-minor-mode org-inline-anim-mode
