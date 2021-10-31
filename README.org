@@ -3,10 +3,20 @@
 
 * org-inline-anim
 
-Org-inline-anim plays animated GIF or PNG inline in Org Babel's results block.
+Org-inline-anim plays animated GIF or PNG inline in Org buffers.
 
 ** Installation
 
+Download =org-inline-pdf.el= into somewhere in your local directory and install it with =M-x package-install-file=.
+
+Enable this feature in an Org buffer with =M-x org-inline-anim-mode=. Add the following line to your init file to automatically enable the feature in newly opened Org buffers.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook #'org-inline-anim-mode)
+#+END_SRC
+
 ** Usage
 
-You can play animated GIF or PNG graphics in a results block by =M-x org-inline-anim-animate= (or =C-c C-x m=). This key binding works when the point is within the results block or the source code block from which the result was output.
+You can play an animation by M-x =org-inline-anim-animate= (or =C-c C-x m=) when the point is on the image. If you use Org-babel and a result block has an animation image, the command works also in the result block or in the source block that generated the result block.
+
+You can play the animation in loop mode with a single prefix (=C-u=). You can stop it with a double prefix (=C-u C-u=) or a numeric arg 0 (=C-u 0= or =C-0=). The former shows the last frame after playback is stopped. The latter shows the first frame instead.
