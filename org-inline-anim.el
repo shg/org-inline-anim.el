@@ -66,13 +66,11 @@
 
 (defun org-inline-anim--get-image-overlay-in-result-of-this ()
   "Return image overlay of the result of the current source code block."
-  (let ((element (org-element-at-point)))
-    (if (eq (org-element-type element) 'src-block)
-	(let ((rebeg (org-babel-where-is-src-block-result)))
-	  (if rebeg
-	      (save-excursion
-		(goto-char rebeg)
-		(org-inline-anim--get-image-overlay-in-result)))))))
+  (let ((result-block (org-babel-where-is-src-block-result)))
+    (if result-block
+	(save-excursion
+	  (goto-char result-block)
+	  (org-inline-anim--get-image-overlay-in-result)))))
 
 (defun org-inline-anim-animate (&optional arg)
   "Animate graphics at point or in the result block of the current source block.
@@ -86,11 +84,7 @@ frame and stops."
   (save-excursion
     (let* ((ov (let ((element (org-element-at-point)))
 		 (if (eq (org-element-type element) 'src-block)
-		     (let ((rebeg (org-babel-where-is-src-block-result)))
-		       (if rebeg
-			   (save-excursion
-			     (goto-char rebeg)
-			     (org-inline-anim--get-image-overlay-in-result))))
+		     (org-inline-anim--get-image-overlay-in-result-of-this)
 		   (if (and (eq (org-element-type element) 'paragraph)
 			    (org-element-property :results element))
 		       (let* ((beg (org-element-property :contents-begin element))
