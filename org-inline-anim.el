@@ -54,15 +54,12 @@
   "Return image overlay at point if there's an image overlay or nil if not."
   (org-inline-anim--first-image-overlay (overlays-at (point))))
 
-(defun org-inline-anim--get-image-overlay-in-result ()
-  "Return image overlay if POS is in a result paragraph."
-  (let ((element (org-element-at-point)))
-    (if (and (eq (org-element-type element) 'paragraph)
-	     (org-element-property :results element))
-	(let* ((beg (org-element-property :contents-begin element))
-	       (end (org-element-property :contents-end element))
-	       (overlays (overlays-in beg end)))
-	  (org-inline-anim--first-image-overlay overlays)))))
+(defun org-inline-anim--get-image-overlay-in-element (element)
+  "Return image overlay in the org-element ELEMENT."
+  (let* ((beg (org-element-property :contents-begin element))
+	 (end (org-element-property :contents-end element))
+	 (overlays (overlays-in beg end)))
+    (org-inline-anim--first-image-overlay overlays)))
 
 (defun org-inline-anim--get-image-overlay-in-result-of-this ()
   "Return image overlay of the result of the current source code block."
@@ -70,7 +67,7 @@
     (if result-block
 	(save-excursion
 	  (goto-char result-block)
-	  (org-inline-anim--get-image-overlay-in-result)))))
+	  (org-inline-anim--get-image-overlay-in-element (org-element-at-point))))))
 
 (defun org-inline-anim-animate (&optional arg)
   "Animate graphics at point or in the result block of the current source block.
@@ -87,10 +84,7 @@ frame and stops."
 		     (org-inline-anim--get-image-overlay-in-result-of-this)
 		   (if (and (eq (org-element-type element) 'paragraph)
 			    (org-element-property :results element))
-		       (let* ((beg (org-element-property :contents-begin element))
-			      (end (org-element-property :contents-end element))
-			      (overlays (overlays-in beg end)))
-			 (org-inline-anim--first-image-overlay overlays))
+		       (org-inline-anim--get-image-overlay-in-element element)
 		     (org-inline-anim--get-image-overlay-at-point)))))
 	   (disp (overlay-get ov 'display)))
       (let ((frames (image-multi-frame-p disp))
