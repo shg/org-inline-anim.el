@@ -1,4 +1,4 @@
-;;; org-inline-anim.el --- Play animated GIF or PNG inline in Org -*- lexical-binding: t -*-
+;;; org-inline-anim.el --- Inline playback of animated GIF/PNG for Org -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2021 Shigeaki Nishina
 
@@ -7,7 +7,7 @@
 ;; Created: October 24, 2021
 ;; URL: https://github.com/shg/org-inline-anim.el
 ;; Package-Requires: ((emacs "25.1") (org "9.4"))
-;; Version: 0.1a
+;; Version: 0.2
 ;; Keywords: org, outlines, hypermedia, multimedia
 
 ;; This file is not part of GNU Emacs.
@@ -29,11 +29,27 @@
 
 ;;; Commentary:
 
-;; Play animated GIF or PNG inline in Org buffers.
-
-;;; Usage:
-
+;; This package enables inline playback of animated GIF or PNG in Org
+;; buffers.
 ;;
+;; Usage:
+;;
+;; Download org-inline-anim.el and insall it using package.el.
+;;
+;;   (package-install-file "/path-to-download-dir/org-inline-anim.el")
+;;
+;; Enable this feature in an Org buffer with M-x org-inline-anim-mode.
+;; Add the following line in your init file to automatically enable
+;; the feature in newly opened Org buffers.
+;;
+;;   (add-hook 'org-mode-hook #'org-inline-anim-mode)
+;;
+;; Now you can play animated GIF or PNG images in Org.
+;;
+;; M-x org-inline-anim-animate (C-c C-x m) plays the animation once.
+;; With a single prefix (C-u), it plays the animation in loop mode.
+;; With a double prefix (C-u C-u), it shows the last frame and stops playback.
+;; With a numeric arg 0 (C-u 0 or C-0), it shows the first frame and stops playback.
 
 ;;; Code:
 
@@ -74,7 +90,7 @@
 
 Without a prefix ARG, the animation is played once and stops.
 With a single prefix arg, the animation loops.  With a double
-prefix arg, the animation goes to the final frame and stops.
+prefix arg, the animation goes to the last frame and stops.
 With a numeric prefix arg of 0, the animation goes to the first
 frame and stops."
   (interactive "P")
@@ -101,7 +117,7 @@ frame and stops."
 
 ;;;###autoload
 (define-minor-mode org-inline-anim-mode
-  "Inline anim minor mode"
+  "Inline playback of animated GIF/PNG for Org."
   nil "" nil
   (cond
    (org-inline-anim-mode
