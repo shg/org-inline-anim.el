@@ -105,7 +105,7 @@ frame and stops."
 	   (disp (overlay-get ov 'display)))
       (let ((frames (image-multi-frame-p disp))
 	    (prefix (prefix-numeric-value arg)))
-	(if frames
+	(if (and (listp frames) (numberp (cdr frames)))
 	    (cond ((= prefix 4)
 		   (image-animate disp 0 t))
 		  ((= prefix 16)
