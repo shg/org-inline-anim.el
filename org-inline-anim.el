@@ -6,7 +6,7 @@
 ;; Maintainer: Shigeaki Nishina
 ;; Created: October 24, 2021
 ;; URL: https://github.com/shg/org-inline-anim.el
-;; Package-Requires: ((emacs "25.1") (org "9.4"))
+;; Package-Requires: ((emacs "25.3") (org "9.4"))
 ;; Version: 0.2
 ;; Keywords: org, outlines, hypermedia, multimedia
 
