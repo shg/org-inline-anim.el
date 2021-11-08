@@ -1,13 +1,16 @@
 # -*- eval: (visual-line-mode 1) -*-
 #+STARTUP: showall
 
+[[https://melpa.org/#/org-inline-anim][file:https://melpa.org/packages/org-inline-anim-badge.svg]]
+[[https://stable.melpa.org/#/org-inline-anim][file:https://stable.melpa.org/packages/org-inline-anim-badge.svg]]
+
 * org-inline-anim
 
 Org-inline-anim plays animated GIF or PNG inline in Org buffers.
 
 ** Installation
 
-Download =org-inline-anim.el= into somewhere in your local directory and install it with =M-x package-install-file=.
+You can install org-inline-anim from MELPA. For manual installation, download =org-inline-anim.el= into somewhere in your local directory and install it with =M-x package-install-file=.
 
 Enable this feature in an Org buffer with =M-x org-inline-anim-mode=. Add the following line to your init file to automatically enable the feature in newly opened Org buffers.
 
