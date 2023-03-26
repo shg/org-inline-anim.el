@@ -86,8 +86,7 @@
 	  (org-inline-anim--get-image-overlay-in-element (org-element-at-point))))))
 
 (defun org-inline-anim-animate (&optional arg)
-  "Animate graphics at point or in the result block of the current source block.
-
+  "Animate image at point or in the result block of the current source block.
 Without a prefix ARG, the animation is played once and stops.
 With a single prefix arg, the animation loops.  With a double
 prefix arg, the animation goes to the last frame and stops.
