@@ -20,6 +20,6 @@ Enable this feature in an Org buffer with =M-x org-inline-anim-mode=. Add the fo
 
 ** Usage
 
-You can play an animation by M-x =org-inline-anim-animate= (or =C-c C-x m=) when the point is on the image. If you use Org-babel and a result block has an animation image, the command works also in the result block or in the source block that generated the result block.
+You can play an animation by =M-x org-inline-anim-animate= (or =C-c C-x m=) when the point is on the image. If you use Org-babel and a result block has an animation image, the command works also in the result block or in the source block that generated the result block.
 
 Without a prefix, the animation will play only once and stop at the last frame. With a single prefix (=C-u=), the animation will play and loop. You can stop it with a double prefix (=C-u C-u=) or a numeric arg 0 (=C-u 0= or =C-0=). The former shows the last frame after playback is stopped. The latter shows the first frame instead.
