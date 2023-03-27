@@ -85,6 +85,23 @@
 	  (goto-char result-block)
 	  (org-inline-anim--get-image-overlay-in-element (org-element-at-point))))))
 
+(defun org-inline-anim--animate-one (arg ov)
+  "Animate an animatable image in the overlay OV.
+ARG specifies how to loop or stop the animation."
+  (if (overlayp ov)
+      (let* ((disp (overlay-get ov 'display))
+	     (frames (image-multi-frame-p disp))
+	     (prefix (prefix-numeric-value arg)))
+	(if (and (listp frames) (numberp (cdr frames)))
+	    (cond ((= prefix 4)
+		   (image-animate disp 0 t))
+		  ((= prefix 16)
+		   (image-animate disp (1- (car frames)) 0))
+		  ((= prefix 0)
+		   (image-animate disp 0 0))
+		  (t
+		   (image-animate disp)))))))
+
 (defun org-inline-anim-animate (&optional arg)
   "Animate image at point or in the result block of the current source block.
 Without a prefix ARG, the animation is played once and stops.
@@ -100,19 +117,8 @@ frame and stops."
 		   (if (and (eq (org-element-type element) 'paragraph)
 			    (org-element-property :results element))
 		       (org-inline-anim--get-image-overlay-in-element element)
-		     (org-inline-anim--get-image-overlay-at-point)))))
-	   (disp (overlay-get ov 'display)))
-      (let ((frames (image-multi-frame-p disp))
-	    (prefix (prefix-numeric-value arg)))
-	(if (and (listp frames) (numberp (cdr frames)))
-	    (cond ((= prefix 4)
-		   (image-animate disp 0 t))
-		  ((= prefix 16)
-		   (image-animate disp (1- (car frames)) 0))
-		  ((= prefix 0)
-		   (image-animate disp 0 0))
-		  (t
-		   (image-animate disp))))))))
+		     (org-inline-anim--get-image-overlay-at-point))))))
+      (org-inline-anim--animate-one arg ov))))
 
 ;;;###autoload
 (define-minor-mode org-inline-anim-mode
