@@ -50,12 +50,20 @@
 ;; With a single prefix (C-u), it plays the animation in loop mode.
 ;; With a double prefix (C-u C-u), it shows the last frame and stops playback.
 ;; With a numeric arg 0 (C-u 0 or C-0), it shows the first frame and stops playback.
+;;
+;; M-x org-inline-anim-animate-all (C-c C-x M) plays all animations
+;; in the buffer at once.  The same prefix arguments are effective.
 
 ;;; Code:
 
 (require 'org-element)
 
-(defconst org-inline-anim-key (kbd "C-c C-x m"))
+(defvar org-inline-anim-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-x m") #'org-inline-anim-animate)
+    (define-key map (kbd "C-c C-x M") #'org-inline-anim-animate-all)
+    map)
+  "Keymap for `org-inline-anim-mode'.")
 
 (defun org-inline-anim--first-image-overlay (overlays)
   "Return first image overlay in OVERLAYS that has display property."
@@ -72,10 +80,11 @@
 
 (defun org-inline-anim--get-image-overlay-in-element (element)
   "Return image overlay in the org-element ELEMENT."
-  (let* ((beg (org-element-property :contents-begin element))
-	 (end (org-element-property :contents-end element))
-	 (overlays (overlays-in beg end)))
-    (org-inline-anim--first-image-overlay overlays)))
+  (let ((beg (org-element-property :begin element))
+	(end (org-element-property :end element)))
+    (if (and (numberp beg) (numberp end))
+	(let ((overlays (overlays-in (1- beg) end)))
+	  (org-inline-anim--first-image-overlay overlays)))))
 
 (defun org-inline-anim--get-image-overlay-in-result-of-this ()
   "Return image overlay of the result of the current source code block."
@@ -84,6 +93,32 @@
 	(save-excursion
 	  (goto-char result-block)
 	  (org-inline-anim--get-image-overlay-in-element (org-element-at-point))))))
+
+(defun org-inline-anim--animate-one (arg ov)
+  "Animate an animatable image in the overlay OV.
+ARG specifies how to loop or stop the animation."
+  (if (overlayp ov)
+      (let* ((disp (overlay-get ov 'display))
+	     (frames (image-multi-frame-p disp))
+	     (prefix (prefix-numeric-value arg)))
+	(if (and (listp frames) (numberp (cdr frames)))
+	    (cond ((= prefix 4)
+		   (image-animate disp 0 t))
+		  ((= prefix 16)
+		   (image-animate disp (1- (car frames)) 0))
+		  ((= prefix 0)
+		   (image-animate disp 0 0))
+		  (t
+		   (image-animate disp)))))))
+
+(defun org-inline-anim-animate-all (&optional arg)
+  "Animate all animatable images in the current buffer.
+ARG specifies how to loop or stop the animations."
+  (interactive "P")
+  (org-element-map (org-element-parse-buffer) 'link
+    (lambda (element)
+      (let ((ov (org-inline-anim--get-image-overlay-in-element element)))
+	(org-inline-anim--animate-one arg ov)))))
 
 (defun org-inline-anim-animate (&optional arg)
   "Animate image at point or in the result block of the current source block.
@@ -100,29 +135,15 @@ frame and stops."
 		   (if (and (eq (org-element-type element) 'paragraph)
 			    (org-element-property :results element))
 		       (org-inline-anim--get-image-overlay-in-element element)
-		     (org-inline-anim--get-image-overlay-at-point)))))
-	   (disp (overlay-get ov 'display)))
-      (let ((frames (image-multi-frame-p disp))
-	    (prefix (prefix-numeric-value arg)))
-	(if (and (listp frames) (numberp (cdr frames)))
-	    (cond ((= prefix 4)
-		   (image-animate disp 0 t))
-		  ((= prefix 16)
-		   (image-animate disp (1- (car frames)) 0))
-		  ((= prefix 0)
-		   (image-animate disp 0 0))
-		  (t
-		   (image-animate disp))))))))
+		     (org-inline-anim--get-image-overlay-at-point))))))
+      (org-inline-anim--animate-one arg ov))))
 
 ;;;###autoload
 (define-minor-mode org-inline-anim-mode
   "Inline playback of animated GIF/PNG for Org."
-  nil "" nil
-  (cond
-   (org-inline-anim-mode
-    (define-key org-mode-map org-inline-anim-key #'org-inline-anim-animate))
-   (t
-    (define-key org-mode-map org-inline-anim-key nil))))
+  :init-value nil
+  :lighter ""
+  :keymap org-inline-anim-mode-map)
 
 (provide 'org-inline-anim)
 
