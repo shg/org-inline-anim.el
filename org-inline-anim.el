@@ -1,13 +1,13 @@
 ;;; org-inline-anim.el --- Inline playback of animated GIF/PNG for Org -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021 Shigeaki Nishina
+;; Copyright (C) 2021-2023 Shigeaki Nishina
 
 ;; Author: Shigeaki Nishina
 ;; Maintainer: Shigeaki Nishina
 ;; Created: October 24, 2021
 ;; URL: https://github.com/shg/org-inline-anim.el
 ;; Package-Requires: ((emacs "25.3") (org "9.4"))
-;; Version: 0.2
+;; Version: 0.3
 ;; Keywords: org, outlines, hypermedia, multimedia
 
 ;; This file is not part of GNU Emacs.
