@@ -55,8 +55,12 @@
 
 (require 'org-element)
 
-(defconst org-inline-anim-key (kbd "C-c C-x m"))
-(defconst org-inline-anim-all-key (kbd "C-c C-x M"))
+(defvar org-inline-anim-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-x m") #'org-inline-anim-animate)
+    (define-key map (kbd "C-c C-x M") #'org-inline-anim-animate-all)
+    map)
+  "Keymap for `org-inline-anim-mode'.")
 
 (defun org-inline-anim--first-image-overlay (overlays)
   "Return first image overlay in OVERLAYS that has display property."
@@ -134,14 +138,9 @@ frame and stops."
 ;;;###autoload
 (define-minor-mode org-inline-anim-mode
   "Inline playback of animated GIF/PNG for Org."
-  nil "" nil
-  (cond
-   (org-inline-anim-mode
-    (define-key org-mode-map org-inline-anim-key #'org-inline-anim-animate)
-    (define-key org-mode-map org-inline-anim-all-key #'org-inline-anim-animate-all))
-   (t
-    (define-key org-mode-map org-inline-anim-key nil)
-    (define-key org-mode-map org-inline-anim-all-key nil))))
+  :init-value nil
+  :lighter ""
+  :keymap org-inline-anim-mode-map)
 
 (provide 'org-inline-anim)
 
