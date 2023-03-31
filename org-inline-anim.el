@@ -56,6 +56,7 @@
 (require 'org-element)
 
 (defconst org-inline-anim-key (kbd "C-c C-x m"))
+(defconst org-inline-anim-all-key (kbd "C-c C-x M"))
 
 (defun org-inline-anim--first-image-overlay (overlays)
   "Return first image overlay in OVERLAYS that has display property."
@@ -72,10 +73,11 @@
 
 (defun org-inline-anim--get-image-overlay-in-element (element)
   "Return image overlay in the org-element ELEMENT."
-  (let* ((beg (org-element-property :contents-begin element))
-	 (end (org-element-property :contents-end element))
-	 (overlays (overlays-in beg end)))
-    (org-inline-anim--first-image-overlay overlays)))
+  (let ((beg (org-element-property :begin element))
+	(end (org-element-property :end element)))
+    (if (and (numberp beg) (numberp end))
+	(let ((overlays (overlays-in (1- beg) end)))
+	  (org-inline-anim--first-image-overlay overlays)))))
 
 (defun org-inline-anim--get-image-overlay-in-result-of-this ()
   "Return image overlay of the result of the current source code block."
@@ -102,6 +104,15 @@ ARG specifies how to loop or stop the animation."
 		  (t
 		   (image-animate disp)))))))
 
+(defun org-inline-anim-animate-all (&optional arg)
+  "Animate all animatable images in the current buffer.
+ARG specifies how to loop or stop the animations."
+  (interactive "P")
+  (org-element-map (org-element-parse-buffer) 'link
+    (lambda (element)
+      (let ((ov (org-inline-anim--get-image-overlay-in-element element)))
+	(org-inline-anim--animate-one arg ov)))))
+
 (defun org-inline-anim-animate (&optional arg)
   "Animate image at point or in the result block of the current source block.
 Without a prefix ARG, the animation is played once and stops.
@@ -126,9 +137,11 @@ frame and stops."
   nil "" nil
   (cond
    (org-inline-anim-mode
-    (define-key org-mode-map org-inline-anim-key #'org-inline-anim-animate))
+    (define-key org-mode-map org-inline-anim-key #'org-inline-anim-animate)
+    (define-key org-mode-map org-inline-anim-all-key #'org-inline-anim-animate-all))
    (t
-    (define-key org-mode-map org-inline-anim-key nil))))
+    (define-key org-mode-map org-inline-anim-key nil)
+    (define-key org-mode-map org-inline-anim-all-key nil))))
 
 (provide 'org-inline-anim)
 
