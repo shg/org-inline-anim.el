@@ -7,7 +7,7 @@
 ;; Created: October 24, 2021
 ;; URL: https://github.com/shg/org-inline-anim.el
 ;; Package-Requires: ((emacs "25.3") (org "9.4"))
-;; Version: 0.3
+;; Version: 0.4
 ;; Keywords: org, outlines, hypermedia, multimedia
 
 ;; This file is not part of GNU Emacs.
@@ -53,10 +53,20 @@
 ;;
 ;; M-x org-inline-anim-animate-all (C-c C-x M) plays all animations
 ;; in the buffer at once.  The same prefix arguments are effective.
+;;
+;; You can assign a non-nil value to `org-inline-anim-loop' for
+;; animations to loop by default.  A single prefix (C-u) then means to
+;; play only once.
 
 ;;; Code:
 
+(require 'image-mode)
 (require 'org-element)
+
+(defcustom org-inline-anim-loop nil
+"Non-nil means loop playback by default."
+  :type 'boolean
+  :group 'org-inline-anim)
 
 (defvar org-inline-anim-mode-map
   (let ((map (make-sparse-keymap)))
@@ -100,16 +110,21 @@ ARG specifies how to loop or stop the animation."
   (if (overlayp ov)
       (let* ((disp (overlay-get ov 'display))
 	     (frames (image-multi-frame-p disp))
-	     (prefix (prefix-numeric-value arg)))
+	     (prefix (prefix-numeric-value arg))
+	     (prefix (if org-inline-anim-loop
+			 (cond ((= prefix 1) 4)
+			       ((= prefix 4) 1)
+			       (t prefix))
+		       prefix)))
 	(if (and (listp frames) (numberp (cdr frames)))
-	    (cond ((= prefix 4)
+	    (cond ((= prefix 1)
+		   (image-animate disp))
+		  ((= prefix 4)
 		   (image-animate disp 0 t))
 		  ((= prefix 16)
 		   (image-animate disp (1- (car frames)) 0))
 		  ((= prefix 0)
-		   (image-animate disp 0 0))
-		  (t
-		   (image-animate disp)))))))
+		   (image-animate disp 0 0)))))))
 
 (defun org-inline-anim-animate-all (&optional arg)
   "Animate all animatable images in the current buffer.
@@ -122,11 +137,11 @@ ARG specifies how to loop or stop the animations."
 
 (defun org-inline-anim-animate (&optional arg)
   "Animate image at point or in the result block of the current source block.
-Without a prefix ARG, the animation is played once and stops.
-With a single prefix arg, the animation loops.  With a double
-prefix arg, the animation goes to the last frame and stops.
-With a numeric prefix arg of 0, the animation goes to the first
-frame and stops."
+By default, the animation plays once and stops if called without
+a prefix.  With a single prefix ARG, it will loop.  With a double
+prefix arg, the animation goes to the last frame and stops.  With
+a numeric prefix arg of 0, the animation goes to the first frame
+and stops."
   (interactive "P")
   (save-excursion
     (let* ((ov (let ((element (org-element-at-point)))
