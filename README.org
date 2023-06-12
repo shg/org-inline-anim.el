@@ -25,3 +25,5 @@ You can play an animation by =M-x org-inline-anim-animate= (or =C-c C-x m=) when
 Without a prefix, the animation will play only once and stop at the last frame. With a single prefix (=C-u=), the animation will play and loop. You can stop it with a double prefix (=C-u C-u=) or a numeric arg 0 (=C-u 0= or =C-0=). The former shows the last frame after playback is stopped. The latter shows the first frame instead.
 
 =M-x org-inline-anim-animate-all= (or =C-c C-x M=) plays all the animatable images in the buffer at once. The same prefix arguments above works for this command too.
+
+If you prefer to loop the animation by default, set =org-inline-anim-loop= to non-nil. Then with a single prefix, the animation will play only once without looping.
