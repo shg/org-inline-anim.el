@@ -60,7 +60,7 @@
 
 ;;; Code:
 
-(require 'image-mode)
+(require 'image)
 (require 'org-element)
 
 (defcustom org-inline-anim-loop nil
